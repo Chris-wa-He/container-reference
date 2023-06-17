@@ -1,0 +1,28 @@
+# Image includes DB tools like mysql / Redis .etc for testing DB connection easily
+
+FROM public.ecr.aws/amazonlinux/amazonlinux:2
+
+MAINTAINER ChrisHe hwachris@amazon.com
+
+# Update and install tools
+RUN yum update -y
+RUN yum install -y wget tar make
+
+# Install mysql client
+RUN yum install mariadb -y
+
+# Install postgresql client
+RUN amazon-linux-extras install postgresql12 -y
+
+# Install Redis-cli
+RUN amazon-linux-extras install epel -y
+RUN yum install gcc jemalloc-devel openssl-devel tcl tcl-devel -y
+WORKDIR /
+RUN wget http://download.redis.io/redis-stable.tar.gz
+RUN tar xvzf redis-stable.tar.gz
+RUN rm redis-stable.tar.gz
+WORKDIR redis-stable
+RUN make BUILD_TLS=yes
+
+# Keep container running with tail -f 
+# CMD tail -f /dev/null
